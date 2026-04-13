@@ -6,6 +6,7 @@ require_login();
 
 $error = '';
 $captcha = '';
+$status = trim($_GET['status'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
@@ -24,13 +25,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $captcha = generate_captcha();
 }
 
-$tickets = db()->prepare('SELECT t.*, a.full_name AS admin_name FROM support_tickets t LEFT JOIN users a ON a.id = t.answered_by WHERE t.user_id = :uid ORDER BY t.created_at DESC');
-$tickets->execute(['uid' => current_user()['id']]);
+$ticketsSql = 'SELECT t.*, a.full_name AS admin_name FROM support_tickets t LEFT JOIN users a ON a.id = t.answered_by WHERE t.user_id = :uid';
+$params = ['uid' => current_user()['id']];
+if ($status === 'answered') {
+    $ticketsSql .= ' AND t.answer IS NOT NULL';
+} elseif ($status === 'open') {
+    $ticketsSql .= ' AND t.answer IS NULL';
+}
+$ticketsSql .= ' ORDER BY t.created_at DESC';
+$tickets = db()->prepare($ticketsSql);
+$tickets->execute($params);
 
 require 'includes/header.php';
 ?>
 <h2>Поддержка</h2>
 <?php if ($error): ?><div class="alert alert-danger"><?= h($error) ?></div><?php endif; ?>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <select name="status" class="form-select">
+            <option value="">Все запросы</option>
+            <option value="open" <?= $status === 'open' ? 'selected' : '' ?>>Только без ответа</option>
+            <option value="answered" <?= $status === 'answered' ? 'selected' : '' ?>>Только с ответом</option>
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100">Фильтр</button></div>
+</form>
 <form method="post" class="card card-body mb-3">
     <textarea name="message" class="form-control" maxlength="1500" rows="4" placeholder="Опишите вопрос" required></textarea>
     <label class="form-label mt-2">Капча: <?= h($captcha) ?></label>

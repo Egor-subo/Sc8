@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
 require_once 'includes/auth.php';
+$q = trim($_GET['q'] ?? '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && current_user()) {
     if (isset($_POST['like_post'])) {
@@ -21,9 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && current_user()) {
     exit;
 }
 
-$posts = db()->query('SELECT p.*, u.full_name,
+$sql = 'SELECT p.*, u.full_name,
     (SELECT COUNT(*) FROM post_likes l WHERE l.post_id = p.id) AS likes
-    FROM posts p JOIN users u ON u.id = p.author_id ORDER BY p.created_at DESC')->fetchAll();
+    FROM posts p JOIN users u ON u.id = p.author_id';
+$params = [];
+if ($q !== '') {
+    $sql .= ' WHERE p.title LIKE :q OR p.content LIKE :q OR u.full_name LIKE :q';
+    $params['q'] = '%' . $q . '%';
+}
+$sql .= ' ORDER BY p.created_at DESC';
+$stmt = db()->prepare($sql);
+$stmt->execute($params);
+$posts = $stmt->fetchAll();
 
 require 'includes/header.php';
 ?>
@@ -31,6 +41,15 @@ require 'includes/header.php';
     <h1>Школьный портал SPp</h1>
     <p class="mb-0">Новости школы, задания, журнал оценок, поддержка и личные профили — всё в одном месте.</p>
 </div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card card-body h-100"><h6>1) Добавление контента</h6><p class="mb-0 text-muted">Посты/новости добавляются в таблицу <code>posts</code>. Объявления — в <code>announcements</code>.</p></div></div>
+    <div class="col-md-4"><div class="card card-body h-100"><h6>2) Задания и оценки</h6><p class="mb-0 text-muted">Учителя публикуют задания в разделе «Задания», оценки редактируют в «Журнале».</p></div></div>
+    <div class="col-md-4"><div class="card card-body h-100"><h6>3) Профиль</h6><p class="mb-0 text-muted">В «Профиле» есть поле «О себе», можно обновить телефон, username и аватар.</p></div></div>
+</div>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-6"><input name="q" value="<?= h($q) ?>" class="form-control" placeholder="Фильтр по постам: заголовок, текст, автор"></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Фильтр</button></div>
+</form>
 
 <?php foreach ($posts as $post): ?>
     <article class="card mb-3 shadow-sm">
@@ -57,5 +76,8 @@ require 'includes/header.php';
         </div>
     </article>
 <?php endforeach; ?>
+<?php if (!$posts): ?>
+    <div class="alert alert-info">Посты не найдены по выбранному фильтру.</div>
+<?php endif; ?>
 
 <?php require 'includes/footer.php'; ?>

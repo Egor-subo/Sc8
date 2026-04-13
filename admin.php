@@ -14,17 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute(['id' => (int)$_POST['delete_user']]);
     }
 
-    if (isset($_POST['add_grade'])) {
-        $stmt = db()->prepare('INSERT INTO grades(student_id, subject_id, teacher_id, grade, comment) VALUES(:student,:subject,:teacher,:grade,:comment)');
-        $stmt->execute([
-            'student' => (int)$_POST['student_id'],
-            'subject' => (int)$_POST['subject_id'],
-            'teacher' => current_user()['id'],
-            'grade' => (int)$_POST['grade'],
-            'comment' => trim($_POST['comment']),
-        ]);
-    }
-
     if (isset($_POST['answer_ticket'])) {
         $stmt = db()->prepare('UPDATE support_tickets SET answer=:answer, answered_by=:admin, answered_at=NOW() WHERE id=:id');
         $stmt->execute([
@@ -100,18 +89,6 @@ require 'includes/header.php';
                 <form method="post"><button class="btn btn-sm btn-outline-danger" name="delete_user" value="<?= (int)$s['id'] ?>">Удалить</button></form>
             </div>
         <?php endforeach; ?>
-    </div>
-</div>
-<div class="col-lg-6">
-    <div class="card card-body">
-        <h5>Выставить оценку</h5>
-        <form method="post" class="row g-2">
-            <div class="col-12"><select name="student_id" class="form-select"><?php foreach($students as $s): ?><option value="<?= (int)$s['id'] ?>"><?= h($s['full_name']) ?></option><?php endforeach; ?></select></div>
-            <div class="col-12"><select name="subject_id" class="form-select"><?php foreach($subjects as $s): ?><option value="<?= (int)$s['id'] ?>"><?= h($s['name']) ?></option><?php endforeach; ?></select></div>
-            <div class="col-4"><input type="number" min="2" max="5" name="grade" class="form-control" required></div>
-            <div class="col-8"><input name="comment" class="form-control" placeholder="Комментарий"></div>
-            <div class="col-12"><button class="btn btn-dark" name="add_grade" value="1">Сохранить</button></div>
-        </form>
     </div>
 </div>
 </div>
