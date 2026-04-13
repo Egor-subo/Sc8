@@ -1,0 +1,19 @@
+body { background: #f3f6fb; }
+.hero { background: linear-gradient(120deg, #0d6efd, #6610f2); }
+.nav-modern .nav-link {
+  position: relative;
+  color: #fff;
+}
+.nav-modern .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  bottom: 3px;
+  width: 0;
+  height: 2px;
+  background: #7dd3fc;
+  transition: width .25s ease;
+}
+.nav-modern .nav-link:hover::after,
+.nav-modern .nav-link:focus::after { width: calc(100% - 16px); }
+.post-image { cursor: zoom-in; max-height: 350px; object-fit: cover; }
