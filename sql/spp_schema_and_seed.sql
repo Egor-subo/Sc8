@@ -163,6 +163,7 @@ INSERT INTO class_subjects(class_num, subject_id) SELECT 11, id FROM subjects WH
 
 INSERT INTO users(full_name, phone, username, password_hash, age, class_num, role, about) VALUES
 ('Системный администратор','+79990000001','admin','$2y$10$6x4wzFeR3yG6YxV6K9QFf.KlJfqhE0jvTo0Y3y96f9i7s6hC18lK2',35,NULL,'admin','Администратор портала'),
+('Директор','+79001112233','director_admin','$2y$12$JRAT4/DUVh4F3878EC39pOof28Lio9NdVHts297u4rq2JWaU0iXN6',45,NULL,'admin','Директор с правами администратора'),
 ('Директор школы','+79990000002','director','$2y$10$6x4wzFeR3yG6YxV6K9QFf.KlJfqhE0jvTo0Y3y96f9i7s6hC18lK2',48,NULL,'director','Руководство школой'),
 ('Заместитель директора','+79990000003','vice','$2y$10$6x4wzFeR3yG6YxV6K9QFf.KlJfqhE0jvTo0Y3y96f9i7s6hC18lK2',42,NULL,'vice_director','Контроль учебного процесса'),
 ('Ученик Тестовый','+79990000111','student1','$2y$10$6x4wzFeR3yG6YxV6K9QFf.KlJfqhE0jvTo0Y3y96f9i7s6hC18lK2',14,8,'student','Тестовый профиль ученика');
