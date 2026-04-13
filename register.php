@@ -3,7 +3,7 @@ require_once 'config.php';
 require_once 'includes/captcha.php';
 
 $errors = [];
-$captcha = generate_captcha();
+$captcha = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim($_POST['full_name'] ?? '');
@@ -36,6 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Пользователь с таким телефоном или username уже существует.';
         }
     }
+    $captcha = generate_captcha();
+} else {
     $captcha = generate_captcha();
 }
 

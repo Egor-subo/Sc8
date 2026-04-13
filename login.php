@@ -3,7 +3,7 @@ require_once 'config.php';
 require_once 'includes/captcha.php';
 
 $error = '';
-$captcha = generate_captcha();
+$captcha = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identity = trim($_POST['identity'] ?? '');
@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $error = 'Неверные данные входа.';
     }
+    $captcha = generate_captcha();
+} else {
     $captcha = generate_captcha();
 }
 

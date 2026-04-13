@@ -15,6 +15,17 @@ CREATE TABLE users (
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE teacher_subject_classes (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ teacher_id INT NOT NULL,
+ subject_id INT NOT NULL,
+ class_num TINYINT UNSIGNED NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
+ FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+ UNIQUE KEY uq_teacher_subject_class (teacher_id, subject_id, class_num)
+);
+
 CREATE TABLE subjects (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL UNIQUE);
 
 CREATE TABLE class_subjects (id INT AUTO_INCREMENT PRIMARY KEY, class_num TINYINT UNSIGNED NOT NULL, subject_id INT NOT NULL, FOREIGN KEY (subject_id) REFERENCES subjects(id), UNIQUE KEY uq_class_subject (class_num, subject_id));

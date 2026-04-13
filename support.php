@@ -5,7 +5,7 @@ require_once 'includes/captcha.php';
 require_login();
 
 $error = '';
-$captcha = generate_captcha();
+$captcha = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
@@ -19,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: support.php');
         exit;
     }
+    $captcha = generate_captcha();
+} else {
     $captcha = generate_captcha();
 }
 
